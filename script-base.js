@@ -17,6 +17,7 @@ var Generator = module.exports = function Generator() {
 
   this.cameledName = this._.camelize(this.name);
   this.classedName = this._.classify(this.name);
+  this.slugName = this._.slugify(this.name);
 
   if (typeof this.env.options.appPath === 'undefined') {
     try {
@@ -125,15 +126,31 @@ Generator.prototype.addScriptToIndex = function (script) {
   }
 };
 
-Generator.prototype.generateSourceAndTest = function (appTemplate, testTemplate, targetDirectory, skipAdd) {
+Generator.prototype.addModuleToApp = function(moduleName) {
+  try {
+    var appPath = this.env.options.appPath;
+    var fullPath = path.join(appPath, 'scripts', 'app' + this.scriptSuffix);
+    angularUtils.rewriteFile({
+      file: fullPath,
+      needle: '/// <end angularModules>',
+      splicable: [
+        ',\'' + moduleName + '\''
+      ]
+    });
+  } catch (e) {
+    console.log('\nUnable to find '.yellow + fullPath + '. Reference to '.yellow + script + '.js ' + 'not added.\n'.yellow);
+  }
+};
+
+Generator.prototype.generateSourceAndTest = function (appTemplate, testTemplate, targetDirectory, skipAdd, filename) {
   // Services use classified names
   if (this.generatorName.toLowerCase() === 'service') {
     this.cameledName = this.classedName;
   }
-
-  this.appTemplate(appTemplate, path.join('scripts', targetDirectory, this.name));
-  this.testTemplate(testTemplate, path.join(targetDirectory, this.name));
+  filename = filename ? filename : this.name;
+  this.appTemplate(appTemplate, path.join('scripts', targetDirectory, filename));
+  this.testTemplate(testTemplate, path.join(targetDirectory, filename));
   if (!skipAdd) {
-    this.addScriptToIndex(path.join(targetDirectory, this.name));
+    this.addScriptToIndex(path.join(targetDirectory, filename));
   }
 };

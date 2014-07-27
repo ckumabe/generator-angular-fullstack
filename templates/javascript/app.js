@@ -1,6 +1,10 @@
 'use strict';
 
-angular.module('<%= scriptAppName %>', [<%= angularModules %>])<% if (ngRoute) { %>
+angular.module('<%= scriptAppName %>', [
+  <%= angularModules %>
+  /// <start angularModules>
+  /// <end angularModules>
+  ])<% if (ngRoute) { %>
   .config(function ($routeProvider, $locationProvider<% if (mongoPassportUser) { %>, $httpProvider<% } %>) {
     $routeProvider
       .when('/', {

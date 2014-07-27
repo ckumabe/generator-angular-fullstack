@@ -1,0 +1,12 @@
+Description:
+    Creates a new Angular module
+
+Example:
+    yo angular-fullstack:module Thing
+
+    This will create:
+        app/scripts/modules/thing/thing.js
+        app/scripts/modules/thing/services/thing-srvc.js
+        app/scripts/modules/thing/templates/thing.tmpl.html
+        test/client/spec/modules/thing/thing.js
+        test/client/spec/modules/thing/services/thing-srvc.js

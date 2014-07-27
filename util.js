@@ -35,26 +35,28 @@ function rewrite (args) {
 
   var lines = args.haystack.split('\n');
 
-  var otherwiseLineIndex = 0;
+  var otherwiseLineIndex = args.needle ? -1 : 0;
   lines.forEach(function (line, i) {
     if (line.indexOf(args.needle) !== -1) {
       otherwiseLineIndex = i;
     }
   });
+  if (otherwiseLineIndex >= 0) {
+    var spaces = 0;
+    while (lines[otherwiseLineIndex].charAt(spaces) === ' ') {
+      spaces += 1;
+    }
 
-  var spaces = 0;
-  while (lines[otherwiseLineIndex].charAt(spaces) === ' ') {
-    spaces += 1;
+    var spaceStr = '';
+    while ((spaces -= 1) >= 0) {
+      spaceStr += ' ';
+    }
+    lines.splice(otherwiseLineIndex, 0, args.splicable.map(function (line) {
+      return spaceStr + line;
+    }).join('\n'));
+  } else {
+    console.warn('Needle was not found in the haystack. No lines added.');
   }
-
-  var spaceStr = '';
-  while ((spaces -= 1) >= 0) {
-    spaceStr += ' ';
-  }
-
-  lines.splice(otherwiseLineIndex, 0, args.splicable.map(function (line) {
-    return spaceStr + line;
-  }).join('\n'));
 
   return lines.join('\n');
 }
